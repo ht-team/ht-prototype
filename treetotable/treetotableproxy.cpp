@@ -120,6 +120,14 @@ Qt::ItemFlags TreeToTableProxy::flags(const QModelIndex &index) const
     return sourceModel()->flags(mapToSource(index));
 }
 
+QVariant TreeToTableProxy::headerData(int section, Qt::Orientation orientation, int role) const
+{
+    if(orientation == Qt::Vertical && role == Qt::DisplayRole)
+        return section + 1;
+    else
+        return QAbstractItemModel::headerData(section, orientation, role);
+}
+
 void TreeToTableProxy::setSourceModel(QAbstractItemModel *sourceModel)
 {
     QAbstractProxyModel::setSourceModel(sourceModel);

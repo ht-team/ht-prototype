@@ -109,6 +109,14 @@ void MainForm::on_pbAddHeader_clicked()
     }
         break;
         case MtTemplateItem::Template:
+    {
+        MtTemplate * t = item->toTemplate();
+        if(t)
+        {
+            newHeader = t->addHeader();
+            newHeader->itemData().at(0)->setData(QVariantList()<<"Inserted Into template Header");
+        }
+    }
         break;
     }
     m_model->update();
