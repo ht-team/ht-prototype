@@ -1,6 +1,6 @@
 #include "mttemplate.h"
 
-MtTemplate::MtTemplate(MtTemplateFactory *factory):MtFooterHolder(this), m_factory(factory)
+MtTemplate::MtTemplate(MtTemplateFactory *factory):MtFooterHolder(this), m_factory(factory), m_columns(0)
 {
 }
 
