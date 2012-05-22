@@ -41,6 +41,10 @@ private:
 class MtTemplateItem
 {
     public:
+    /**
+     *@enum MtTemplateItem::Type
+     *Описывает тип элемента шаблона
+*/
     enum Type
     {
         Header,
@@ -51,10 +55,19 @@ class MtTemplateItem
     typedef QList<MtDataItem * > ItemData;
         MtTemplateItem(MtTemplate * parentTemplate);
         virtual ~MtTemplateItem();
-
+        /**
+         *@return Тип элемента шаблона
+*/
         virtual int type() const=0;
-
+        /**
+         *Позволяет получить дочерний элемент
+         *\param at индекс дочернего элемента
+         *@return указатель на дочерний элемент или 0 если таковой не найден
+*/
         MtTemplateItem * child(int at);
+        /**
+         * @overload child()
+*/
         const MtTemplateItem * child(int at) const;
 
         bool removeChild(MtTemplateItem * child);
