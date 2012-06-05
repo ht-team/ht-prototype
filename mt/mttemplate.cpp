@@ -5,50 +5,6 @@ MtTemplate::MtTemplate(MtTemplateFactory *factory):MtFooterHolder(this), m_facto
 }
 
 
-MtTemplateHolder::MtTemplateHolder(QObject * parent):QObject(parent),m_code(-1),m_templateCode(-1)
-{
-}
-
-const int MtTemplateHolder::code() const
-{
-    return m_code;
-}
-
-void MtTemplateHolder::setCode(int code)
-{
-    m_code=code;
-}
-
-const QString & MtTemplateHolder::name() const
-{
-    return m_name;
-}
-
-void MtTemplateHolder::setName(const QString &name)
-{
-    m_name=name;
-}
-
-const int MtTemplateHolder::templateCode() const
-{
-    return m_templateCode;
-}
-
-void MtTemplateHolder::setTemplateCode(int code)
-{
-    m_templateCode=code;
-}
-
-const QString & MtTemplateHolder::brief() const
-{
-    return m_brief;
-}
-
-void MtTemplateHolder::setBrief(const QString &brief)
-{
-    m_brief=brief;
-}
-
 MtTemplateItem::MtTemplateItem(MtTemplate * parentTemplate):m_parentTemplate(parentTemplate)
 {
     setParent(0);

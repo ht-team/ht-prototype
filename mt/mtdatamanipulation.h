@@ -1,12 +1,10 @@
 #ifndef DATAMANIPULATION_H
 #define DATAMANIPULATION_H
 #include <QtCore>
-//TODO: определить владельца алгоритма сравнения и метод загрузки алгоритмов
 class MtTemplateItem;
 class MtTemplate;
 class QWidget;
 class MtIndicatorItem;
-class MtTemplateHolder;
 class MtComparer;
 /**
  *@class MtTemplateSerialization
