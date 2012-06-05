@@ -93,6 +93,7 @@ QModelIndex MtTemplateModel::
 index(int row, int column, const QModelIndex &parent) const
 {
 
+    if(row < 0 || column < 0) return QModelIndex();
     MtTemplateItem * item = itemFromIndex(parent);
     if(!item ) return QModelIndex();
 

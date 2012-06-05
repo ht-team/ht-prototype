@@ -81,6 +81,10 @@ QModelIndex TreeToTableProxy::parent(const QModelIndex &/*child*/) const
 QModelIndex TreeToTableProxy::indexFromRow(int row) const
 {
     QModelIndex index;
+    if(row < 0)
+    {
+        return index;
+    }
     while(!index.isValid())
     {
         index=findRow(row,index);
@@ -125,7 +129,7 @@ QVariant TreeToTableProxy::headerData(int section, Qt::Orientation orientation, 
     if(orientation == Qt::Vertical && role == Qt::DisplayRole)
         return section + 1;
     else
-        return QAbstractProxyModel::headerData(section, orientation, role);
+        return QAbstractItemModel::headerData(section, orientation, role);
 }
 
 void TreeToTableProxy::setSourceModel(QAbstractItemModel *sourceModel)
