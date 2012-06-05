@@ -4,14 +4,14 @@
 static QMutex s_comparersLocker;
 static QList<MtCompareHandler*> s_comparers;
 
- MtCompare * MtCompare::tester(int byCode)
+ MtCompare * MtCompare::tester(const QString &code)
 {
     QMutexLocker ml(&s_comparersLocker);
     MtCompare * tester=0;
     foreach(MtCompareHandler * h,s_comparers)
     {
 
-        if((tester=h->create(byCode)))
+        if((tester=h->create(code)))
         {
             break;
         }

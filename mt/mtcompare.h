@@ -1,13 +1,14 @@
 #ifndef MTCOMPARE_H
 #define MTCOMPARE_H
-class QVariantList;
+class QString;
 class MtCompare;
+class MtDataItem;
 class MtCompareHandler
 {
 public:
     MtCompareHandler();
     ~MtCompareHandler();
-    virtual MtCompare * create(int code)=0;
+    virtual MtCompare * create(const QString& code)=0;
 
 };
 class MtCompare
@@ -19,8 +20,8 @@ public:
         NotReady,
         Other
     };
-    static  MtCompare * tester(int byCode);
-    virtual Result test(const QVariantList & which,const QVariantList & with)=0;
+    static  MtCompare * tester(const QString& code);
+    virtual Result test(const MtDataItem* which,const MtDataItem* with)=0;
 
 };
 
