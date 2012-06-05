@@ -125,7 +125,7 @@ QVariant TreeToTableProxy::headerData(int section, Qt::Orientation orientation, 
     if(orientation == Qt::Vertical && role == Qt::DisplayRole)
         return section + 1;
     else
-        return QAbstractItemModel::headerData(section, orientation, role);
+        return QAbstractProxyModel::headerData(section, orientation, role);
 }
 
 void TreeToTableProxy::setSourceModel(QAbstractItemModel *sourceModel)
