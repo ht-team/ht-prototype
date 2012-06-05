@@ -27,7 +27,14 @@ MtDataItem::MtDataItem(MtTemplateItem * parent):m_parent(parent)
 
  MtDataItem::~MtDataItem()
 {
-
+     foreach(MtIndicatorConnection* connection, m_connections)
+     {
+         if(connection)
+             connection->disconnect();
+         else
+             delete connection;
+         //TODO: extract method, and make it protected and review connect/dissconnect functions, for feature of make on other side ref for connection null, and review all MtTemplateItem and MtDataItem destructors are safe.
+     }
 }
 
 const QVariantList &MtDataItem::data() const
@@ -62,9 +69,45 @@ const MtTemplateItem *MtDataItem::parent() const
     return m_parent;
 }
 
+void MtDataItem::connectIndicator(MtIndicatorItem *indicator, MtCompare *comparer)
+{
+    if(!indicator || !comparer)
+    {
+        return;
+    }
+    MtIndicatorConnection* reconnection = 0;
+    foreach(MtIndicatorConnection* connection, m_connections)
+    {
+        if(connection->indicator() == indicator)
+        {
+            reconnection = connection;
+        }
+    }
+
+    if(!reconnection)
+    {
+        reconnection = new MtIndicatorConnection(this, indicator, comparer);
+    }
+    else
+    {
+        reconnection->setIndicator(indicator);
+        reconnection->setSourceItem(this);
+        reconnection->setComparer(comparer);
+    }
+}
+
 MtDataItem::MtIndicatorItems MtDataItem::indicators() const
 {
+    QSet<MtIndicatorItem*> indicators;
+    foreach(MtIndicatorConnection* connection, m_connections)
+    {
+        if(connection->isConnected())
+        {
+            indicators.insert(connection->indicator());
+        }
+    }
 
+    return indicators.toList();
 }
 
 
@@ -72,6 +115,47 @@ MtIndicatorItem::MtIndicatorItem(MtTemplateItem *parent):MtDataItem(parent),
     m_connection(0)
 {
 
+}
+
+MtIndicatorItem::~MtIndicatorItem()
+{
+    if(!m_connection)
+        return;
+    if(m_connection->isConnected())
+    {
+        m_connection->disconnect();
+    }
+    delete m_connection;
+}
+
+void MtIndicatorItem::connect(MtDataItem *item, MtCompare *comparer)
+{
+    if(m_connection && m_connection->sourceItem() == item)
+    {
+        m_connection->setComparer(comparer);
+        return;
+    }
+
+    m_connection = new MtIndicatorConnection(item, this, comparer);
+}
+
+void MtIndicatorItem::disconnect()
+{
+    if(m_connection)
+    {
+        m_connection->setIndicator(0);
+        m_connection->disconnect();
+    }
+    m_connection = 0;
+}
+
+MtDataItem *MtIndicatorItem::sourceItem()
+{
+    if(m_connection)
+    {
+        return m_connection->sourceItem();
+    }
+    return 0;
 }
 
 
@@ -165,4 +249,13 @@ void MtIndicatorConnection::disconnect()
     m_sourceItem->disconnectIndicator(m_indicator);
     m_indicator->disconnect();
     m_comparer = 0;
+}
+
+void MtDataItem::disconnectAllIndicators()
+{
+    MtIndicatorItems indicatorItems = indicators();
+    foreach(MtIndicatorItem* indicator, indicatorItems)
+    {
+        disconnectIndicator(indicator);
+    }
 }

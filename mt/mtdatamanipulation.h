@@ -55,7 +55,8 @@ class MtDataItem
         void disconnectIndicator(MtIndicatorItem* indicator);
         void disconnectAllIndicators();
        private:
-        typedef QList<MtIndicatorConnection*> m_connections;
+        typedef QList<MtIndicatorConnection*> MtIndicatorConnections;
+        MtIndicatorConnections m_connections;
         MtTemplateItem * m_parent;
         QVariantList m_data;
 };
@@ -78,8 +79,10 @@ class MtIndicatorItem:public MtDataItem
 {
       public:
         MtIndicatorItem(MtTemplateItem * parent);
+        ~MtIndicatorItem();
         void connect(MtDataItem* item, MtCompare* comparer);
         void disconnect();
+        MtDataItem* sourceItem();
         bool isIndicator() const;
         bool isReadOnly() const;
 private:
