@@ -5,6 +5,7 @@ MtTemplate::MtTemplate(MtTemplateFactory *factory):MtFooterHolder(this), m_facto
 }
 
 
+
 MtTemplateItem::MtTemplateItem(MtTemplate * parentTemplate):m_parentTemplate(parentTemplate)
 {
     setParent(0);
