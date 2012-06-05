@@ -64,14 +64,14 @@ const MtTemplateItem *MtDataItem::parent() const
 
 MtDataItem::MtIndicatorItems MtDataItem::indicators() const
 {
-    return m_indicators;
+
 }
 
 
 MtIndicatorItem::MtIndicatorItem(MtTemplateItem *parent):MtDataItem(parent),
     m_connection(0)
 {
-    addWatcher(watch);
+
 }
 
 
