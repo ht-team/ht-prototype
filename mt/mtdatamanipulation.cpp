@@ -1,4 +1,5 @@
 #include "mtdatamanipulation.h"
+#include <mtcompare.h>
 class MtIndicatorConnection
 {
 public:
@@ -63,17 +64,22 @@ bool MtDataItem::isIndicator() const
     return false;
 }
 
+int MtDataItem::state() const
+{
+    return 0;
+}
+
 
 const MtTemplateItem *MtDataItem::parent() const
 {
     return m_parent;
 }
 
-void MtDataItem::connectIndicator(MtIndicatorItem *indicator, MtCompare *comparer)
+MtIndicatorConnection* MtDataItem::connectIndicator(MtIndicatorItem *indicator, MtCompare *comparer)
 {
-    if(!indicator || !comparer)
+    if(!indicator)
     {
-        return;
+        return 0;
     }
     MtIndicatorConnection* reconnection = 0;
     foreach(MtIndicatorConnection* connection, m_connections)
@@ -93,6 +99,31 @@ void MtDataItem::connectIndicator(MtIndicatorItem *indicator, MtCompare *compare
         reconnection->setIndicator(indicator);
         reconnection->setSourceItem(this);
         reconnection->setComparer(comparer);
+    }
+    return reconnection;
+}
+
+void MtDataItem::disconnectIndicator(MtIndicatorItem *indicator)
+{
+    if(!indicator)
+    {
+        return;
+    }
+    MtIndicatorConnection* connection = 0;
+    foreach (MtIndicatorConnection* i, m_connections)
+    {
+        if(i->indicator() == indicator)
+        {
+            connection = i;
+            break;
+        }
+    }
+
+    if(connection)
+    {
+        m_connections.removeAll(connection);
+        connection->setIndicator(0);
+        delete connection;
     }
 }
 
@@ -128,15 +159,12 @@ MtIndicatorItem::~MtIndicatorItem()
     delete m_connection;
 }
 
-void MtIndicatorItem::connect(MtDataItem *item, MtCompare *comparer)
+MtIndicatorConnection* MtIndicatorItem::connect(MtDataItem *item, MtCompare *comparer)
 {
-    if(m_connection && m_connection->sourceItem() == item)
-    {
-        m_connection->setComparer(comparer);
-        return;
-    }
-
-    m_connection = new MtIndicatorConnection(item, this, comparer);
+    if(!item)
+        return 0;
+    m_connection = item->connectIndicator(this, comparer);
+    return m_connection;
 }
 
 void MtIndicatorItem::disconnect()
@@ -156,6 +184,15 @@ MtDataItem *MtIndicatorItem::sourceItem()
         return m_connection->sourceItem();
     }
     return 0;
+}
+
+int MtIndicatorItem::state() const
+{
+    if(!m_connection || !m_connection->isConnected())
+    {
+        return MtDataItem::state();
+    }
+    return m_connection->comparer()->test(m_connection->sourceItem(), this);
 }
 
 
@@ -202,6 +239,11 @@ MtIndicatorConnection::MtIndicatorConnection(MtDataItem *sourceItem,
                                              MtCompare *comparer):
     m_indicator(indicator), m_sourceItem(sourceItem), m_comparer(comparer)
 {
+    if(sourceItem)
+    {
+        sourceItem->connectIndicator(indicator, comparer);
+    }
+
 }
 
 MtIndicatorConnection::~MtIndicatorConnection()
@@ -246,9 +288,8 @@ bool MtIndicatorConnection::isConnected() const
 
 void MtIndicatorConnection::disconnect()
 {
-    m_sourceItem->disconnectIndicator(m_indicator);
-    m_indicator->disconnect();
-    m_comparer = 0;
+    m_sourceItem = 0;
+    m_indicator = 0;
 }
 
 void MtDataItem::disconnectAllIndicators()

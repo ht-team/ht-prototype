@@ -43,6 +43,7 @@ class MtDataItem
 
         virtual bool isReadOnly() const ;
         virtual bool isIndicator() const;
+        virtual int state() const;
 
 
         MtIndicatorItems indicators() const;
@@ -51,7 +52,7 @@ class MtDataItem
         virtual void load();
         const MtTemplateItem * parent() const;
 
-        void connectIndicator(MtIndicatorItem* indicator,MtCompare* comparer);
+        MtIndicatorConnection* connectIndicator(MtIndicatorItem* indicator,MtCompare* comparer);
         void disconnectIndicator(MtIndicatorItem* indicator);
         void disconnectAllIndicators();
        private:
@@ -80,9 +81,11 @@ class MtIndicatorItem:public MtDataItem
       public:
         MtIndicatorItem(MtTemplateItem * parent);
         ~MtIndicatorItem();
-        void connect(MtDataItem* item, MtCompare* comparer);
+        MtIndicatorConnection* connect(MtDataItem* item, MtCompare* comparer);
         void disconnect();
         MtDataItem* sourceItem();
+
+        int state() const;
         bool isIndicator() const;
         bool isReadOnly() const;
 private:
