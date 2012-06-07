@@ -121,7 +121,7 @@ void MtDataItem::disconnectIndicator(MtIndicatorItem *indicator)
 
     if(connection)
     {
-        m_connections.removeAll(connection);
+        m_connections.remove(connection);
         connection->setIndicator(0);
         delete connection;
     }
@@ -159,13 +159,6 @@ MtIndicatorItem::~MtIndicatorItem()
     delete m_connection;
 }
 
-MtIndicatorConnection* MtIndicatorItem::connect(MtDataItem *item, MtCompare *comparer)
-{
-    if(!item)
-        return 0;
-    m_connection = item->connectIndicator(this, comparer);
-    return m_connection;
-}
 
 void MtIndicatorItem::disconnect()
 {
@@ -192,7 +185,7 @@ int MtIndicatorItem::state() const
     {
         return MtDataItem::state();
     }
-    return m_connection->comparer()->test(m_connection->sourceItem(), this);
+    return m_connection->comparer()->test(m_connection->sourceItem());
 }
 
 
@@ -204,6 +197,14 @@ bool MtIndicatorItem::isIndicator() const
 bool MtIndicatorItem::isReadOnly() const
 {
     return true;
+}
+
+void MtIndicatorItem::setupConnection(MtIndicatorConnection *connection)
+{
+    if(!m_connection)
+    {
+        m_connection = connection;
+    }
 }
 
 MtTemplateSerialization::MtTemplateSerialization(QObject *parent):QObject(parent)
@@ -239,11 +240,10 @@ MtIndicatorConnection::MtIndicatorConnection(MtDataItem *sourceItem,
                                              MtCompare *comparer):
     m_indicator(indicator), m_sourceItem(sourceItem), m_comparer(comparer)
 {
+    if(indicator)
+        indicator->setupConnection(this);
     if(sourceItem)
-    {
-        sourceItem->connectIndicator(indicator, comparer);
-    }
-
+        sourceItem->setupConnection(this);
 }
 
 MtIndicatorConnection::~MtIndicatorConnection()
@@ -299,4 +299,11 @@ void MtDataItem::disconnectAllIndicators()
     {
         disconnectIndicator(indicator);
     }
+}
+
+void MtDataItem::setupConnection(MtIndicatorConnection *connection)
+{
+    if(!connection)
+        return;
+    m_connections.insert(connection);
 }

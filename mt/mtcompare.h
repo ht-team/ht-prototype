@@ -21,7 +21,7 @@ public:
         Other
     };
     static  MtCompare * tester(const QString& code);
-    virtual Result test(const MtDataItem* which,const MtDataItem* with)=0;
+    virtual int test(const MtDataItem* which)=0;
 
 };
 

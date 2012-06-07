@@ -19,10 +19,12 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainform.cpp \
-    exampletempateserrialization.cpp
+    exampletempateserrialization.cpp \
+    comparetest.cpp
 
 HEADERS  += mainform.h \
-    exampletempateserrialization.h
+    exampletempateserrialization.h \
+    comparetest.h
 
 FORMS    += mainform.ui
 

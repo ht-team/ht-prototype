@@ -33,6 +33,8 @@ MainForm::MainForm(QWidget *parent) :
     m_spanController->setTableView(ui->tableView);
     //обновляем информацию об обьединенных ячейках
     m_spanController->updateSpan();
+    m_model->registerBackgroundColorState(0, Qt::green);
+    m_model->registerBackgroundColorState(1, Qt::red);
 
     connect(ui->tableView->selectionModel(),SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
             this,SLOT(on_current_selection_changed(QModelIndex,QModelIndex)));

@@ -1,5 +1,6 @@
 #include "exampletempateserrialization.h"
 #include <QDateTime>
+#include <mtcompare.h>
 class ExampleTemplateFactory: public MtTemplateFactory
 {
 public:
@@ -120,8 +121,11 @@ MtTemplateItem::ItemData ExampleTemplateFactory::defaultSubHeaderData(MtTemplate
     }
     case EditableDocument:
 
-        data.push_back(new MtDataItem(parent));
-        data.push_back(new MtDataItem(parent));
+        MtDataItem* dataItem = new MtDataItem(parent);
+        MtIndicatorItem* indicator = new MtIndicatorItem(parent);
+        dataItem->connectIndicator(indicator, MtCompare::tester("mt.compare.test"));
+        data.push_back(dataItem);
+        data.push_back(indicator);
         break;
     }
     return data;
