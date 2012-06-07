@@ -1,13 +1,12 @@
 #ifndef DATAMANIPULATION_H
 #define DATAMANIPULATION_H
 #include <QtCore>
-//TODO: определить владельца алгоритма сравнения и метод загрузки алгоритмов
 class MtTemplateItem;
 class MtTemplate;
 class QWidget;
 class MtIndicatorItem;
-class MtTemplateHolder;
-class MtComparer;
+class MtCompare;
+class MtIndicatorConnection;
 /**
  *@class MtTemplateSerialization
  *Предоставляет обьект который знает как загрузить/сохранить шаблон
@@ -44,17 +43,22 @@ class MtDataItem
 
         virtual bool isReadOnly() const ;
         virtual bool isIndicator() const;
+        virtual int state() const;
 
 
-        const MtIndicatorItems  & indicators() const;
-        void setIndicators(const MtIndicatorItems & indicators);
+        MtIndicatorItems indicators() const;
 
         virtual void save();
         virtual void load();
-        const MtTemplateItem * parent() const;
-        MtIndicatorItems  & indicators();
+        MtTemplateItem * parent();
+
+        MtIndicatorConnection* connectIndicator(MtIndicatorItem* indicator,MtCompare* comparer);
+        void disconnectIndicator(MtIndicatorItem* indicator);
+        void disconnectAllIndicators();
+        virtual void setupConnection(MtIndicatorConnection* connection);
        private:
-        MtIndicatorItems m_indicators;
+        typedef QSet<MtIndicatorConnection*> MtIndicatorConnections;
+        MtIndicatorConnections m_connections;
         MtTemplateItem * m_parent;
         QVariantList m_data;
 };
@@ -76,16 +80,18 @@ public:
 class MtIndicatorItem:public MtDataItem
 {
       public:
-        MtIndicatorItem(MtTemplateItem * parent,MtDataItem * watch=0);
-        const MtDataItems & watchers() const;
-        void addWatcher(MtDataItem * watcher);
-        void removeWatcher(MtDataItem * watcher);
-        void update(MtDataItem * updateRequester);
-        bool isIndicator() const;
+        MtIndicatorItem(MtTemplateItem * parent);
+        ~MtIndicatorItem();
+        void disconnect();
+        MtDataItem* sourceItem();
 
+        int state() const;
+        bool isIndicator() const;
         bool isReadOnly() const;
+
+        void setupConnection(MtIndicatorConnection *connection);
 private:
-        MtDataItems m_watchers;
+        MtIndicatorConnection* m_connection;
 };
 
 #endif // DATAMANIPULATION_H

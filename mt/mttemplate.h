@@ -11,26 +11,7 @@ class MtDataItem;
 class MtTemplateFactory;
 
 
-class MtTemplateHolder:public QObject
-{
-    Q_OBJECT
-public:
-    explicit MtTemplateHolder(QObject * parent);
-    const int code() const;
-    void setCode(int code);
-    const QString & name() const;
-    void setName(const QString & name);
-    const QString & brief() const;
-    void setBrief(const QString & brief);
-    const int templateCode() const;
-    void setTemplateCode(int code);
-private:
-    int m_code;
-    QString  m_name;
-    QString m_brief;
-    int m_templateCode;
 
-};
 /**
  *@class MtTemplateItem
  *Базовая структурная единица шаблона, шаблон состоит из набора обьектов MtTemplateItem

@@ -2,6 +2,7 @@
 #include "mttemplate.h"
 #include "mtdatamanipulation.h"
 #include <QDebug>
+#include <QColor>
 MtTemplateModel::MtTemplateModel(QObject *parent) :
     QAbstractItemModel(parent)
 {
@@ -47,19 +48,24 @@ int MtTemplateModel::columnCount(const QModelIndex &parent) const
 QVariant MtTemplateModel::data(const QModelIndex &index, int role) const
 {
     const MtTemplateItem * item = itemFromIndex(index);
-    switch (role) {
-    case Qt::EditRole:
-    case Qt::DisplayRole:
-        if(index.column() < item->itemData().size())
-        {
+    if(index.column() < item->itemData().size())
+    {
 
-            QVariant data = item->itemData().
-                    at(index.column())->dataView();
-            return data;
+        QVariant data = stateData(item->itemData().at(index.column())->state(), role);
+        if(data.isNull())
+        {
+            switch (role)
+            {
+            case Qt::EditRole:
+            case Qt::DisplayRole:
+                return item->itemData().at(index.column())->dataView();
+                break;
+            default:
+                break;
+            }
+
         }
-        break;
-    default:
-        return QVariant();
+        return data;
     }
     return QVariant();
 }
@@ -72,14 +78,38 @@ bool MtTemplateModel::setData(const QModelIndex &index, const QVariant &value, i
         {
             MtTemplateItem * item = itemFromIndex(index);
             if(!item)return false;
-            if(index.column()>= item->itemData().size())
+            if(index.column() >= item->itemData().size())
             {
                 return false;
             }
             MtDataItem * data = item->itemData().at(index.column());
             if(data->isReadOnly()) return false;
-            QVariantList vlData = (value.type() == QVariant::List) ? value.toList() : QVariantList()<<value;
+            QVariantList  list = data->data();
+            if(list.size())
+            {
+                list[0] = value;
+            }
+            else
+            {
+                list<< value;
+            }
+
+            QVariantList vlData = (value.type() == QVariant::List) ? value.toList() : list;
             data->setData(vlData);
+            emit dataChanged(index, index);
+            foreach(MtIndicatorItem* indicator, data->indicators())
+            {
+                MtTemplateItem* indicatorParent = indicator->parent();
+                QModelIndex indicatorItemIndex = findItem(indicatorParent);
+                if(index.isValid())
+                {
+                    int column = indicatorParent->itemData().indexOf(indicator);
+                    QModelIndex indicatorIndex = MtTemplateModel::index(indicatorItemIndex.row(),
+                                                       column,
+                                                       indicatorItemIndex.parent());
+                    emit dataChanged(indicatorIndex, indicatorIndex);
+                }
+            }
         }
         break;
         default:
@@ -138,6 +168,52 @@ QSize MtTemplateModel::span(const QModelIndex &index) const
         return QSize(columnCount() - index.column(), 1);
     }
     return QSize();
+}
+
+void MtTemplateModel::registerNewState(int state, int role, QVariant value)
+{
+    m_states[state][role] = value;
+}
+
+void MtTemplateModel::registerBackgroundColorState(int state, const QColor &color)
+{
+    QVariant vColor;
+    vColor.setValue(color);
+    m_states[state][Qt::BackgroundColorRole] = vColor;
+}
+
+void MtTemplateModel::unregisterState(int state, int role)
+{
+    if(m_states.contains(state))
+    {
+        m_states[state].remove(role);
+        if(!m_states[state].size())
+        {
+            m_states.remove(state);
+        }
+    }
+}
+
+void MtTemplateModel::unregisterState(int state)
+{
+    m_states.remove(state);
+}
+
+void MtTemplateModel::unregisterAllStates()
+{
+    m_states.clear();
+}
+
+QVariant MtTemplateModel::stateData(int state, int role) const
+{
+    if(m_states.contains(state))
+    {
+        if(m_states[state].contains(role))
+        {
+            return m_states[state][role];
+        }
+    }
+    return QVariant();
 }
 
 MtTemplate *MtTemplateModel::handledTemplate()
