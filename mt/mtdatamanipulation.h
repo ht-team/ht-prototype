@@ -50,7 +50,7 @@ class MtDataItem
 
         virtual void save();
         virtual void load();
-        const MtTemplateItem * parent() const;
+        MtTemplateItem * parent();
 
         MtIndicatorConnection* connectIndicator(MtIndicatorItem* indicator,MtCompare* comparer);
         void disconnectIndicator(MtIndicatorItem* indicator);

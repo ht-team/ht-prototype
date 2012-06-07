@@ -70,7 +70,7 @@ int MtDataItem::state() const
 }
 
 
-const MtTemplateItem *MtDataItem::parent() const
+MtTemplateItem *MtDataItem::parent()
 {
     return m_parent;
 }

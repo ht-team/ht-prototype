@@ -78,14 +78,38 @@ bool MtTemplateModel::setData(const QModelIndex &index, const QVariant &value, i
         {
             MtTemplateItem * item = itemFromIndex(index);
             if(!item)return false;
-            if(index.column()>= item->itemData().size())
+            if(index.column() >= item->itemData().size())
             {
                 return false;
             }
             MtDataItem * data = item->itemData().at(index.column());
             if(data->isReadOnly()) return false;
-            QVariantList vlData = (value.type() == QVariant::List) ? value.toList() : QVariantList()<<value;
+            QVariantList  list = data->data();
+            if(list.size())
+            {
+                list[0] = value;
+            }
+            else
+            {
+                list<< value;
+            }
+
+            QVariantList vlData = (value.type() == QVariant::List) ? value.toList() : list;
             data->setData(vlData);
+            emit dataChanged(index, index);
+            foreach(MtIndicatorItem* indicator, data->indicators())
+            {
+                MtTemplateItem* indicatorParent = indicator->parent();
+                QModelIndex indicatorItemIndex = findItem(indicatorParent);
+                if(index.isValid())
+                {
+                    int column = indicatorParent->itemData().indexOf(indicator);
+                    QModelIndex indicatorIndex = MtTemplateModel::index(indicatorItemIndex.row(),
+                                                       column,
+                                                       indicatorItemIndex.parent());
+                    emit dataChanged(indicatorIndex, indicatorIndex);
+                }
+            }
         }
         break;
         default:
