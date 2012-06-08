@@ -170,7 +170,7 @@ QSize MtTemplateModel::span(const QModelIndex &index) const
     return QSize();
 }
 
-void MtTemplateModel::registerNewState(int state, int role, QVariant value)
+void MtTemplateModel::registerState(int state, int role, QVariant value)
 {
     m_states[state][role] = value;
 }

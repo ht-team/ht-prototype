@@ -21,6 +21,11 @@ private:
     MtCompare* m_comparer;
 };
 
+int MtDataItem::defaultState()
+{
+    return -666;
+}
+
 MtDataItem::MtDataItem(MtTemplateItem * parent):m_parent(parent)
 {
 
@@ -66,7 +71,7 @@ bool MtDataItem::isIndicator() const
 
 int MtDataItem::state() const
 {
-    return 0;
+    return defaultState();
 }
 
 

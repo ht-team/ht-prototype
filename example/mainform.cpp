@@ -35,6 +35,8 @@ MainForm::MainForm(QWidget *parent) :
     m_spanController->updateSpan();
     m_model->registerBackgroundColorState(0, Qt::green);
     m_model->registerBackgroundColorState(1, Qt::red);
+    m_model->registerState(0, Qt::DisplayRole, "All right");
+    m_model->registerState(1, Qt::DisplayRole, "Catastrofic failure");
 
     connect(ui->tableView->selectionModel(),SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
             this,SLOT(on_current_selection_changed(QModelIndex,QModelIndex)));

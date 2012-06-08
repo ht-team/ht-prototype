@@ -32,6 +32,7 @@ signals:
 class MtDataItem
 {
      public:
+        static int defaultState();
         MtDataItem(MtTemplateItem * parent);
         typedef QList<MtIndicatorItem * > MtIndicatorItems;
         typedef QList<MtDataItem *> MtDataItems;
