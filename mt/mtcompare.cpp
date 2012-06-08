@@ -1,14 +1,23 @@
 #include "mtcompare.h"
 #include <QList>
 #include <QMutex>
-static QMutex s_comparersLocker;
-static QList<MtCompareHandler*> s_comparers;
+static QMutex* s_comparersLocker = 0;
+static QList<MtCompareHandler*>* s_comparers = 0;
 
- MtCompare * MtCompare::tester(const QString &code)
+static void InitState()
 {
-    QMutexLocker ml(&s_comparersLocker);
+    if(!s_comparersLocker)
+        s_comparersLocker = new QMutex();
+    if(!s_comparers)
+        s_comparers = new QList<MtCompareHandler*>();
+}
+
+MtCompare * MtCompare::tester(const QString &code)
+{
+    InitState();
+    QMutexLocker ml(s_comparersLocker);
     MtCompare * tester=0;
-    foreach(MtCompareHandler * h,s_comparers)
+    foreach(MtCompareHandler * h, *s_comparers)
     {
 
         if((tester=h->create(code)))
@@ -21,14 +30,16 @@ static QList<MtCompareHandler*> s_comparers;
 
 MtCompareHandler::MtCompareHandler()
 {
-    QMutexLocker ml(&s_comparersLocker);
-    s_comparers.push_back(this);
+    InitState();
+    QMutexLocker ml(s_comparersLocker);
+    s_comparers->push_back(this);
 }
 
 MtCompareHandler::~MtCompareHandler()
 {
-    QMutexLocker ml(&s_comparersLocker);
-    s_comparers.removeAll(this);
+    InitState();
+    QMutexLocker ml(s_comparersLocker);
+    s_comparers->removeAll(this);
 }
 
 

@@ -19,6 +19,7 @@ ExampleTempateSerrialization::ExampleTempateSerrialization(QObject *parent) :
 
 void ExampleTempateSerrialization::saveTemplate(MtTemplate *mtTemplate)
 {
+    Q_UNUSED(mtTemplate)
 }
 
 MtTemplate *ExampleTempateSerrialization::loadTemplate()
