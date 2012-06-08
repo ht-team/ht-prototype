@@ -290,6 +290,8 @@ void MtIndicatorConnection::disconnect()
 {
     m_sourceItem = 0;
     m_indicator = 0;
+    delete m_comparer;
+    m_comparer = 0;
 }
 
 void MtDataItem::disconnectAllIndicators()
