@@ -12,6 +12,10 @@ static void InitState()
         s_comparers = new QList<MtCompareHandler*>();
 }
 
+MtCompare::~MtCompare()
+{
+}
+
 MtCompare * MtCompare::tester(const QString &code)
 {
     InitState();

@@ -16,5 +16,15 @@ MtCompare *TestComparerHandler::create(const QString &code)
 int CompareTest::test(const MtDataItem *which)
 {
     QVariant vWhich = which->dataView();
-    return vWhich.toInt() > 1;
+    float fWhichValue = vWhich.toFloat();
+    if(fWhichValue > 2)
+    {
+        return MtCompare::NotReady;
+    }
+    else if(fWhichValue < 2 && fWhichValue > 1)
+    {
+        return MtCompare::Other;
+    }
+
+    return  MtCompare::Ready;
 }

@@ -5,6 +5,7 @@
 #include "treetotableproxy.h"
 #include "tableviewspancontroller.h"
 #include <QDebug>
+#include <mtcompare.h>
 MainForm::MainForm(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::MainForm)
@@ -33,8 +34,12 @@ MainForm::MainForm(QWidget *parent) :
     m_spanController->setTableView(ui->tableView);
     //обновляем информацию об обьединенных ячейках
     m_spanController->updateSpan();
-    m_model->registerBackgroundColorState(0, Qt::green);
-    m_model->registerBackgroundColorState(1, Qt::red);
+    m_model->registerBackgroundColorState(MtCompare::Ready, Qt::green);
+    m_model->registerBackgroundColorState(MtCompare::Other, Qt::yellow);
+    m_model->registerBackgroundColorState(MtCompare::NotReady, Qt::red);
+    m_model->registerState(MtCompare::Ready, Qt::DisplayRole, "All right");
+    m_model->registerState(MtCompare::NotReady, Qt::DisplayRole, "Catastrofic failure");
+    m_model->registerState(MtCompare::Other, Qt::DisplayRole, "Work but can fail");
 
     connect(ui->tableView->selectionModel(),SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
             this,SLOT(on_current_selection_changed(QModelIndex,QModelIndex)));

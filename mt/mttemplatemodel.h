@@ -35,7 +35,7 @@ public:
     QSize span(const QModelIndex & index) const;
 
     //state based functions
-    void registerNewState(int state, int role, QVariant value);
+    void registerState(int state, int role, QVariant value);
     void registerBackgroundColorState(int state, const QColor& color);
 
     void unregisterState(int state, int role);

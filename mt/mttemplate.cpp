@@ -1,5 +1,5 @@
 #include "mttemplate.h"
-
+#include "mtdatamanipulation.h"
 MtTemplate::MtTemplate(MtTemplateFactory *factory):MtFooterHolder(this), m_factory(factory), m_columns(0)
 {
 }
@@ -15,8 +15,15 @@ MtTemplateItem::~MtTemplateItem()
 {
     foreach(MtTemplateItem * i,childs())
     {
-        childs().removeAll(i);
-        delete i;
+        removeChild(i);
+    }
+    if(parent())
+    {
+        parent()->removeChild(this);
+    }
+    foreach (MtDataItem* data, this->itemData())
+    {
+        delete data;
     }
 }
 
@@ -32,14 +39,24 @@ const MtTemplateItem * MtTemplateItem::child(int at) const
 
 bool MtTemplateItem::removeChild(MtTemplateItem *child)
 {
-    return childs().removeAll(child);
+    foreach (MtTemplateItem* item, childs())
+    {
+        if(item == child)
+        {
+            delete child;
+            childs().removeAll(child);
+            return true;
+        }
+    }
+    return false;
 }
 
 bool MtTemplateItem::removeChild(int at)
 {
     if(at>=childs().count()||at<0)return false;
+    delete childs().at(at);
     childs().removeAt(at);
-    return false;
+    return true;
 }
 
 bool MtTemplateItem::swapChild(int from, int too)

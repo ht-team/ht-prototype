@@ -20,6 +20,7 @@ public:
         NotReady,
         Other
     };
+    virtual ~MtCompare();
     static  MtCompare * tester(const QString& code);
     virtual int test(const MtDataItem* which)=0;
 

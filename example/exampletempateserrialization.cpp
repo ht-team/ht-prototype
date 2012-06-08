@@ -80,7 +80,8 @@ void ExampleTempateSerrialization::buildHeaderTree(MtHeader *header, int recLeve
     for(int i = 0; i < subheaderCount; i++)
     {
         MtSubHeader * sh = header->addSubHeader();
-        sh->itemData().at(0)->setData(QVariantList()<<"SubHeader");
+        sh->itemData().at(0)->setData(QVariantList()<<"SubHeader(value > 2 = critical;\n >1 and <2 = can work;\n <1 = All right");
+        sh->itemData().at(1)->setData(QVariantList()<<0.1);
     }
 
     for(int i = 0; i < footerCount; i++)
