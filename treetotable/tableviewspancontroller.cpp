@@ -15,7 +15,7 @@ void TableViewSpanController::updateSpan()
         {
             QSize span=model->span(model->index(i,j,
                                                 tableView()->rootIndex()));
-            if(!span.isNull())
+            if(!span.isNull() $$ span.width() >1)
             {
                 tableView()->setSpan(i,j,span.height(),span.width());
             }
