@@ -104,6 +104,13 @@
       </spacer>
      </item>
      <item>
+      <widget class="QPushButton" name="pbDelete">
+       <property name="text">
+        <string>PushButton</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="pbAddHeader">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Maximum">

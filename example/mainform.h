@@ -22,6 +22,8 @@ private slots:
 void on_current_selection_changed( const QModelIndex & current, const QModelIndex & previous );
 void on_pbAddHeader_clicked();
 
+void on_pbDelete_clicked();
+
 private:
     MtTemplateModel * m_model;
     TreeToTableProxy * m_proxy;

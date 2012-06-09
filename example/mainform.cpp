@@ -37,7 +37,8 @@ MainForm::MainForm(QWidget *parent) :
     m_model->registerBackgroundColorState(MtCompare::Ready, Qt::green);
     m_model->registerBackgroundColorState(MtCompare::Other, Qt::yellow);
     m_model->registerBackgroundColorState(MtCompare::NotReady, Qt::red);
-    m_model->registerState(MtCompare::Ready, Qt::DisplayRole, "All right");
+    m_model->registerState(MtCompare::Ready, Qt::CheckStateRole, Qt::Checked);
+    m_model->registerState(MtCompare::Ready, Qt::DisplayRole, "Ready");
     m_model->registerState(MtCompare::NotReady, Qt::DisplayRole, "Catastrofic failure");
     m_model->registerState(MtCompare::Other, Qt::DisplayRole, "Work but can fail");
 
@@ -135,4 +136,15 @@ void MainForm::on_pbAddHeader_clicked()
                 select(m_proxy->mapFromSource(m_model->findItem(newHeader)),QItemSelectionModel::Select|QItemSelectionModel::Rows);
 
     }
+}
+
+void MainForm::on_pbDelete_clicked()
+{
+    QModelIndex proxyIndex = ui->tableView->currentIndex();
+    QModelIndex index = m_proxy->mapToSource(proxyIndex);
+    MtTemplateItem* item = m_model->itemFromIndex(index);
+    if(item && item != m_model->handledTemplate())
+    delete item;
+    m_model->update();
+    m_proxy->update();
 }
