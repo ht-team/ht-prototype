@@ -173,7 +173,7 @@ const MtFooterHolder::MtFooters & MtFooterHolder::footers() const
 
 MtFooter * MtFooterHolder::addFooter()
 {
-    MtFooter * f = new MtFooter(phyzicalHolder());
+    MtFooter * f = new MtFooter(phyzicalHolder(), this);
     MtTemplate * t = parentTemplate();
     f->itemData()= t->factory()
             ->defaultFooterData(t->templateType(),f);
@@ -271,15 +271,26 @@ int MtSubHeader::type() const
     return Subheader;
 }
 
-MtFooter::MtFooter(MtTemplateItem *holder) :
-    MtTemplateItem(holder ? holder->parentTemplate() : 0)
+
+MtFooter::MtFooter(MtTemplateItem *physicalHolder, MtFooterHolder *holder):
+    MtTemplateItem(physicalHolder ? holder->parentTemplate() : 0), m_holder(holder)
 {
-    setParent(holder);
+    setParent(physicalHolder);
+}
+
+MtFooter::~MtFooter()
+{
+    holder()->footers().removeAll(this);
 }
 
 int MtFooter::type() const
 {
     return Footer;
+}
+
+MtFooterHolder *MtFooter::holder()
+{
+    return m_holder;
 }
 
 

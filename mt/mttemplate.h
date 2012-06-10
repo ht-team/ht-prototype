@@ -182,8 +182,13 @@ public:
 class MtFooter:public MtTemplateItem
 {
    public:
-        MtFooter(MtTemplateItem * holder);
+        MtFooter(MtTemplateItem* physicalHolder, MtFooterHolder* holder);
+        ~MtFooter();
         int type()const;
+protected:
+        MtFooterHolder* holder();
+private:
+        MtFooterHolder* m_holder;
 };
 
 
