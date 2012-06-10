@@ -43,7 +43,7 @@ bool MtTemplateItem::removeChild(MtTemplateItem *child)
     {
         if(item == child)
         {
-            delete child;
+
             childs().removeAll(child);
             return true;
         }
