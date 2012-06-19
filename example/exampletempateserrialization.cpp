@@ -1,6 +1,7 @@
 #include "exampletempateserrialization.h"
 #include <QDateTime>
 #include <mtcompare.h>
+#include <QDebug>
 class ExampleTemplateFactory: public MtTemplateFactory
 {
 public:
@@ -123,7 +124,7 @@ MtTemplateItem::ItemData ExampleTemplateFactory::defaultSubHeaderData(MtTemplate
     }
     case EditableDocument:
 
-        MtDataItem* dataItem = new MtDataItem(parent);
+        MtDataItem* dataItem = new ExampleCustomDataItem(parent);
         MtIndicatorItem* indicator = new MtIndicatorItem(parent);
         dataItem->connectIndicator(indicator, MtCompare::tester("mt.compare.test"));
         data.push_back(dataItem);
@@ -149,4 +150,30 @@ MtTemplateItem::ItemData ExampleTemplateFactory::defaultFooterData(MtTemplateFac
         break;
     }
     return data;
+}
+
+
+ExampleCustomDataItem::ExampleCustomDataItem(MtTemplateItem *parent) : MtDataItem(parent)
+{
+}
+
+void ExampleCustomDataItem::save()
+{
+    qDebug()<< "Was saved" << this->data();
+}
+
+void ExampleCustomDataItem::load()
+{
+    QVariantList data = this->data();
+    if(data.size())
+    {
+        data[0] = "Loaded";
+    }
+    else
+    {
+        data << "Loaded";
+    }
+
+    this->setData(data);
+    qDebug()<< "Was loaded" << this->data();
 }

@@ -3,6 +3,14 @@
 
 #include "mtdatamanipulation.h"
 #include "mttemplate.h"
+class ExampleCustomDataItem : public MtDataItem
+{
+public:
+    ExampleCustomDataItem(MtTemplateItem* parent);
+    void save();
+    void load();
+};
+
 class ExampleTempateSerrialization :
         public MtTemplateSerialization
 {

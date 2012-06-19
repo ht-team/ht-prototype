@@ -96,6 +96,7 @@ bool MtTemplateModel::setData(const QModelIndex &index, const QVariant &value, i
 
             QVariantList vlData = (value.type() == QVariant::List) ? value.toList() : list;
             data->setData(vlData);
+            data->save();
             emit dataChanged(index, index);
             foreach(MtIndicatorItem* indicator, data->indicators())
             {
