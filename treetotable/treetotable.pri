@@ -5,4 +5,4 @@ HEADERS += \
 SOURCES += \
     $$PWD/treetotableproxy.cpp \
     $$PWD/tableviewspancontroller.cpp
-INCLUDEPATH = $$PWD
+INCLUDEPATH *= $$PWD
