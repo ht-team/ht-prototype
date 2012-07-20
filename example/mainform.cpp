@@ -37,10 +37,10 @@ MainForm::MainForm(QWidget *parent) :
     m_model->registerBackgroundColorState(MtCompare::Ready, Qt::green);
     m_model->registerBackgroundColorState(MtCompare::Other, Qt::yellow);
     m_model->registerBackgroundColorState(MtCompare::NotReady, Qt::red);
-    m_model->registerState(MtCompare::Ready, Qt::CheckStateRole, Qt::Checked);
-    m_model->registerState(MtCompare::Ready, Qt::DisplayRole, "Ready");
-    m_model->registerState(MtCompare::NotReady, Qt::DisplayRole, "Catastrofic failure");
-    m_model->registerState(MtCompare::Other, Qt::DisplayRole, "Work but can fail");
+    //m_model->registerState(MtCompare::Ready, Qt::CheckStateRole, Qt::Checked);
+    m_model->registerState(MtCompare::Ready, Qt::DisplayRole, "+");
+    m_model->registerState(MtCompare::NotReady, Qt::DisplayRole, "-");
+    m_model->registerState(MtCompare::Other, Qt::DisplayRole, "");
 
     connect(ui->tableView->selectionModel(),SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),
             this,SLOT(on_current_selection_changed(QModelIndex,QModelIndex)));

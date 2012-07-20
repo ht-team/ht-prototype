@@ -23,6 +23,8 @@ public:
 private:
     void buildTemplateTree(MtTemplate * t);
     void buildHeaderTree(MtHeader * header, int recLevel);
+
+    QString visualData(const QVariantList &list);
     
 };
 

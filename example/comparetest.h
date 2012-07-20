@@ -9,7 +9,55 @@ public:
     MtCompare* create(const QString &code);
 };
 
-class CompareTest : public MtCompare
+class CompareLogical : public MtCompare
+{
+public:
+    int test(const MtDataItem *which);
+private:
+
+};
+
+class CompareRange : public MtCompare
+{
+public:
+    int test(const MtDataItem *which);
+private:
+
+};
+
+class CompareEqual : public MtCompare
+{
+public:
+    int test(const MtDataItem *which);
+private:
+
+};
+
+class CompareLagerEqualy : public MtCompare
+{
+public:
+    int test(const MtDataItem *which);
+private:
+
+};
+
+class CompareLessEqualy : public MtCompare
+{
+public:
+    int test(const MtDataItem *which);
+private:
+
+};
+
+class CompareLager : public MtCompare
+{
+public:
+    int test(const MtDataItem *which);
+private:
+
+};
+
+class CompareLess : public MtCompare
 {
 public:
     int test(const MtDataItem *which);

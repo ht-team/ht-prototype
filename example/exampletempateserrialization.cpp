@@ -31,7 +31,8 @@ MtTemplate *ExampleTempateSerrialization::loadTemplate()
     MtTemplate * t =
             new MtTemplate(factory);
     t->setColumnCount(4);
-    t->setTemplateType(MtTemplateFactory::JustTemplate);
+    //t->setTemplateType(MtTemplateFactory::JustTemplate);
+    t->setTemplateType(MtTemplateFactory::EditableDocument);
     buildTemplateTree(t);
     emit end();
     return t;
@@ -57,6 +58,35 @@ void ExampleTempateSerrialization::buildTemplateTree(MtTemplate *t)
        f->itemData().at(1)->setData(QVariantList()<<"Footer template");
     }
 
+
+    /*const int headerCount = 1;
+    const int footerCount = 2;
+
+    const QString ListSignature[footerCount] =
+    {"Petrov","Ivanov"};
+
+    for(int i = 0; i < headerCount; i++)
+    {
+        MtHeader * h = t->addHeader();
+        QString s;
+        QString header = s.setNum(i+1);
+        //nompp
+        if (h)
+        h->itemData().at(0)->setData(QVariantList()<<header);
+        //name
+        header = "Header "+header;
+        h->itemData().at(0)->setData(QVariantList()<<header);
+        buildHeaderTree(h,2);
+    }
+
+    for(int i = 0; i < footerCount; i++)
+    {
+       MtFooter * f = t->addFooter();
+       //name of signature
+       f->itemData().at(0)->setData(QVariantList()<<QString("Footer Template ").append(QVariant(i).toString()));
+       //signature
+       f->itemData().at(1)->setData(QVariantList()<<ListSignature->at(i));
+    }*/
 }
 
 void ExampleTempateSerrialization::buildHeaderTree(MtHeader *header, int recLevel)
@@ -93,6 +123,94 @@ void ExampleTempateSerrialization::buildHeaderTree(MtHeader *header, int recLeve
 
     }
 
+
+    /*const int headerCount = 1;
+    const int footerCount = 2;
+    const int subheaderCount = 6;
+
+    if(recLevel <= 0)
+        return;
+
+    QString ListSignature[footerCount] =
+    {"Sidorov","Pupkin"};
+
+    QVariant norma[subheaderCount][3] =
+    {{1, NULL, 1}, //logical, "+"
+     {1, NULL, 1}, //logical, "-"
+     {1.2, 1.5, 2},//number range
+     {1.0, 2.0, 2},//number range
+     {5, NULL, 2},  // equal
+     {6, NULL, 2}  // equal
+     };
+
+    const QVariant fact[subheaderCount][2] =
+    {{1, NULL},  //logical
+     {0, NULL},  //logical
+     {1.3, NULL},//number range
+     {3, NULL},  //number range
+     {5, NULL},  // equal
+     {5, NULL}   // equal
+     };
+
+    for(int i = 0; i < headerCount; i++)
+    {
+        MtHeader * h = header->addHeader();
+        QString str = header->itemData().at(0)->data().at(0).toString()
+                      +"."+QVariant(i).toString();
+        //nompp
+        h->itemData().at(0)->setData(QVariantList()<<str);
+        //name
+        h->itemData().at(0)->setData(QVariantList()<<QString("Header ").append(str));
+        buildHeaderTree(h, recLevel-1);
+    }
+
+    for(int i = 0; i < subheaderCount; i++)
+    {
+        MtSubHeader * sh = header->addSubHeader();
+        QString str =  header->itemData().at(0)->data().at(0).toString()
+                       +"."+QVariant(i).toString();
+        //nompp
+        sh->itemData().at(0)->setData(QVariantList()<<str);
+        //name
+        sh->itemData().at(1)->setData(QVariantList()<<QString("SubHeader ").append(str));
+
+        //norma - get dataview
+        QVariantList v;
+        v<<norma[i][0]
+                <<norma[i][1]
+                <<norma[i][2];
+        str = visualData(v);
+        //dataview   norma1   norma2  codeprov
+        sh->itemData().at(2)->setData(QVariantList()<<str
+                                                    <<norma[i][0]
+                                                    <<norma[i][1]
+                                                    <<norma[i][2]);
+
+        //fact - get dataview
+        str = visualData(QVariantList()<<fact[i][0]
+                                       <<fact[i][1]
+                                       <<fact[i][2]);
+        //add norma once again to compare values
+        //dataview   fact1  fact2  norma1  norma2  codeprov
+        sh->itemData().at(3)->setData(QVariantList()<<str
+                                                    <<fact[i][0]
+                                                    <<fact[i][1]
+                                                    <<norma[i][0]
+                                                    <<norma[i][1]
+                                                    <<norma[i][2]);
+    }
+
+    for(int i = 0; i < footerCount; i++)
+    {
+        MtFooter * f = header->addFooter();
+        QString str =  header->itemData().at(0)->data().at(0).toString()
+                       +"."+QVariant(i).toString();
+        //name of signature
+        f->itemData().at(0)->setData(QVariantList()<<QString("Footer ").append(str));
+        //signature
+        f->itemData().at(1)->setData(QVariantList()<<ListSignature->at(i));
+    }*/
+
 }
 
 
@@ -104,8 +222,13 @@ defaultHeaderData(MtTemplateFactory::TemplateType type, MtHeader *parent)
     switch(type)
     {
     case JustTemplate:
-        data.push_back(new MtDataItem(parent));
-        data.push_back(new MtDataItem(parent));
+        /*data.push_back(new MtDataItem(parent));
+        data.push_back(new MtDataItem(parent));*/
+
+        //nompp
+        data.push_back(new MtReadOnlyItem(parent));
+        //name
+        data.push_back(new MtReadOnlyItem(parent));
     case EditableDocument:
         break;
     }
@@ -120,15 +243,22 @@ MtTemplateItem::ItemData ExampleTemplateFactory::defaultSubHeaderData(MtTemplate
     case JustTemplate:
     {
 
-        data.push_back(new MtDataItem(parent));
+        //data.push_back(new MtDataItem(parent));
+        //nompp
+        data.push_back(new MtReadOnlyItem(parent));
+        //name
+        data.push_back(new MtReadOnlyItem(parent));
+        //norma
+        data.push_back(new MtReadOnlyItem(parent));
     }
     case EditableDocument:
-
+        //fact value
         MtDataItem* dataItem = new ExampleCustomDataItem(parent);
         MtIndicatorItem* indicator = new MtIndicatorItem(parent);
-        dataItem->connectIndicator(indicator, MtCompare::tester("mt.compare.test"));
+        //dataItem->connectIndicator(indicator, MtCompare::tester("mt.compare.test"));
         data.push_back(dataItem);
         data.push_back(indicator);
+
         break;
     }
     return data;
@@ -142,11 +272,17 @@ MtTemplateItem::ItemData ExampleTemplateFactory::defaultFooterData(MtTemplateFac
     case JustTemplate:
     {
 
-        data.push_back(new MtDataItem(parent));
+        //data.push_back(new MtDataItem(parent));
+        //name of signature
+        data.push_back(new MtReadOnlyItem(parent));
     }
     case EditableDocument:
 
-        data.push_back(new MtDataItem(parent));
+        //data.push_back(new MtDataItem(parent));
+        //signature
+        MtDataItem* dataItem = new ExampleCustomDataItem(parent);
+        data.push_back(dataItem);
+
         break;
     }
     return data;
@@ -165,7 +301,7 @@ void ExampleCustomDataItem::save()
 void ExampleCustomDataItem::load()
 {
     QVariantList data = this->data();
-    if(data.size())
+    /*if(data.size())
     {
         data[0] = "Loaded";
     }
@@ -175,5 +311,71 @@ void ExampleCustomDataItem::load()
     }
 
     this->setData(data);
-    qDebug()<< "Was loaded" << this->data();
+    qDebug()<< "Was loaded" << this->data();*/
+
+    if (data.size())
+    {
+        //codeprov
+        switch (data.at(7).toInt())
+        {
+        //logical compare
+        case 1:
+            //data->connectIndicator(indicator, MtCompare::tester("logical compare"));
+        break;
+        }//end switch
+
+    }
+}
+
+//---------------------------
+//codeprov, norma1, norma2
+//codeprov, data1, data2
+QString ExampleTempateSerrialization::visualData(const QVariantList &list)
+{
+    //visual data depends of codeprov
+    const QString symbols [7] = {"", "..", "", ">=", "<=", ">", "<"};
+
+    QString str = "";
+    int codeprov = list.at(0).toInt();
+
+    //if norma1 doesn't exist
+    if ( list.at(1).toString() == "" )
+    return str;
+
+    switch (codeprov)
+    {
+    case 1:
+    {
+        //for norma
+        if ( (list.at(1).toString() == "+")
+        || (list.at(1).toString() == "-") )
+        {
+            str = list.at(1).toString();
+        }
+        //for fact values
+        else
+        {
+            if ( qRound(list.at(1).toDouble()) == 0)
+                str = "-";
+            if ( qRound(list.at(1).toDouble()) == 1)
+                str = "+";
+        }
+    }
+    break;
+    case 2:
+    {
+        str = list.at(1).toString()
+             +symbols->at(codeprov-1)
+             +list.at(2).toString();
+    }
+    break;
+    case 3: case 4: case 5: case 6:
+    {
+        str = symbols->at(codeprov-1)
+             +list.at(1).toString();
+    }
+    break;
+    }//end switch
+
+    return str;
 }
