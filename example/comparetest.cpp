@@ -46,18 +46,19 @@ MtCompare *TestComparerHandler::create(const QString &code)
 
 int CompareLogical::test(const MtDataItem *which)
 {
-    //какой тип проверки
+    qDebug()<<"come here";
     QVariantList values = which->data();
 
-    if ( values.at(7).toInt() != 1 )
+    if ( values.at(5).toInt() != 1 )
         return  0;
 
     //если данные не введены
     if ( ( values.at(1).isNull() ) && ( values.at(1).toString() == "" ) )
+
         return  MtCompare::Other;
 
     //сравнение фактического значения с нормой
-    if ( values.at(1).toInt() == values.at(5).toInt() )
+    if ( values.at(1).toInt() == values.at(3).toInt() )
         return MtCompare::Ready;
     else
         return MtCompare::NotReady;

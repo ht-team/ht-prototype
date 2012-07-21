@@ -1,6 +1,11 @@
 #include "exampletempateserrialization.h"
 #include <QDateTime>
 #include <mtcompare.h>
+#include <mtdatamanipulation.h>
+
+#include <mtdatamanipulation.h>
+#include <mttemplate.h>
+
 #include <QDebug>
 class ExampleTemplateFactory: public MtTemplateFactory
 {
@@ -30,7 +35,7 @@ MtTemplate *ExampleTempateSerrialization::loadTemplate()
             new ExampleTemplateFactory();
     MtTemplate * t =
             new MtTemplate(factory);
-    t->setColumnCount(4);
+    t->setColumnCount(5);
     //t->setTemplateType(MtTemplateFactory::JustTemplate);
     t->setTemplateType(MtTemplateFactory::EditableDocument);
     buildTemplateTree(t);
@@ -47,7 +52,6 @@ void ExampleTempateSerrialization::buildTemplateTree(MtTemplate *t)
     {
         MtHeader * h = t->addHeader();
         QString header = "Header "+QVariant(i).toString();
-        qDebug()<<h->itemData().count();
         h->itemData().at(0)->setData(QVariantList()<<header);
         buildHeaderTree(h,2);
     }
@@ -64,19 +68,13 @@ void ExampleTempateSerrialization::buildTemplateTree(MtTemplate *t)
     const int footerCount = 2;
 
     const QString ListSignature[footerCount] =
-    {"Petrov","Ivanov"};
+    {"A.S. Petrov","P.P. Ivanov"};
 
     for(int i = 0; i < headerCount; i++)
     {
         MtHeader * h = t->addHeader();
-        QString s;
-        QString header = s.setNum(i+1);
-        //nompp
-        if (h)
-        h->itemData().at(0)->setData(QVariantList()<<header);
-        //name
-        header = "Header "+header;
-        h->itemData().at(0)->setData(QVariantList()<<header);
+        h->itemData().at(0)->setData(QVariantList()<<QVariant(i+1).toString());
+        h->itemData().at(1)->setData(QVariantList()<<QString("Header ").append(QVariant(i+1).toString()));
         buildHeaderTree(h,2);
     }
 
@@ -86,7 +84,7 @@ void ExampleTempateSerrialization::buildTemplateTree(MtTemplate *t)
        //name of signature
        f->itemData().at(0)->setData(QVariantList()<<QString("Footer Template ").append(QVariant(i).toString()));
        //signature
-       f->itemData().at(1)->setData(QVariantList()<<ListSignature->at(i));
+       f->itemData().at(1)->setData(QVariantList()<<ListSignature[i]);
     }
 }
 
@@ -133,7 +131,7 @@ void ExampleTempateSerrialization::buildHeaderTree(MtHeader *header, int recLeve
         return;
 
     QString ListSignature[footerCount] =
-    {"Sidorov","Pupkin"};
+    {"S.S. Sidorov","P.P. Pupkin"};
 
     //norma1, norma2, codeprov
     QVariant norma[subheaderCount][3] =
@@ -159,11 +157,11 @@ void ExampleTempateSerrialization::buildHeaderTree(MtHeader *header, int recLeve
     {
         MtHeader * h = header->addHeader();
         QString str = header->itemData().at(0)->data().at(0).toString()
-                      +"."+QVariant(i).toString();
+                      +"."+QVariant(i+1).toString();
         //nompp
         h->itemData().at(0)->setData(QVariantList()<<str);
         //name
-        h->itemData().at(0)->setData(QVariantList()<<QString("Header ").append(str));
+        h->itemData().at(1)->setData(QVariantList()<<QString("Header ").append(str));
         buildHeaderTree(h, recLevel-1);
     }
 
@@ -171,18 +169,21 @@ void ExampleTempateSerrialization::buildHeaderTree(MtHeader *header, int recLeve
     {
         MtSubHeader * sh = header->addSubHeader();
         QString str =  header->itemData().at(0)->data().at(0).toString()
-                       +"."+QVariant(i).toString();
+                       +"."+QVariant(i+1).toString();
         //nompp
         sh->itemData().at(0)->setData(QVariantList()<<str);
         //name
         sh->itemData().at(1)->setData(QVariantList()<<QString("SubHeader ").append(str));
 
         //norma - get dataview
-        QVariantList v;
+        /*QVariantList v;
         v<<norma[i][0]
                 <<norma[i][1]
-                <<norma[i][2];
-        str = visualData(v);
+                <<norma[i][2];*/
+        str = visualData(QVariantList()<<norma[i][2]
+                         <<norma[i][0]
+                         <<norma[i][1]);
+        //str = "xx";
         //dataview   norma1   norma2  codeprov
         sh->itemData().at(2)->setData(QVariantList()<<str
                                                     <<norma[i][0]
@@ -190,14 +191,9 @@ void ExampleTempateSerrialization::buildHeaderTree(MtHeader *header, int recLeve
                                                     <<norma[i][2]);
 
         //fact - get dataview
-        qDebug()<<"i "<<i;
-        qDebug()<<norma[i][2]<<", "
-                <<fact[i][0]<<", "
-                <<fact[i][1];
         str = visualData(QVariantList()<<norma[i][2]
                                        <<fact[i][0]
                                        <<fact[i][1]);
-        qDebug()<<"set visual data";
         //add norma once again to compare values
         //dataview   fact1  fact2  norma1  norma2  codeprov
         sh->itemData().at(3)->setData(QVariantList()<<str
@@ -216,7 +212,7 @@ void ExampleTempateSerrialization::buildHeaderTree(MtHeader *header, int recLeve
         //name of signature
         f->itemData().at(0)->setData(QVariantList()<<QString("Footer ").append(str));
         //signature
-        f->itemData().at(1)->setData(QVariantList()<<ListSignature->at(i));
+        f->itemData().at(1)->setData(QVariantList()<<ListSignature[i]);
     }
 
 }
@@ -332,17 +328,33 @@ void ExampleCustomDataItem::load()
         data << "Loaded";
     }
 
-    this->setData(data);
-    qDebug()<< "Was loaded" << this->data();*/
+    this->setData(data);*/
+    qDebug()<< "Was loaded" << this->data();
 
     if (data.size())
     {
         //codeprov
-        switch (data.at(7).toInt())
+        switch (data.at(5).toInt())
         {
-        //logical compare
         case 1:
-            //data->connectIndicator(indicator, MtCompare::tester("logical compare"));
+        {
+              qDebug()<<"connect";
+            MtIndicatorItem* indicator = new MtIndicatorItem(this->parent());
+            this->connectIndicator(indicator, MtCompare::tester("logical compare"));
+
+        }
+        break;
+        case 2:
+        {
+            MtIndicatorItem* indicator = new MtIndicatorItem(this->parent());
+            this->connectIndicator(indicator, MtCompare::tester("number range"));
+        }
+        break;
+        case 3:
+        {
+            MtIndicatorItem* indicator = new MtIndicatorItem(this->parent());
+            this->connectIndicator(indicator, MtCompare::tester("values equality"));
+        }
         break;
         }//end switch
 
@@ -351,21 +363,20 @@ void ExampleCustomDataItem::load()
 
 //---------------------------
 //norma1, norma2, codeprov
-//data1, data2, codeprov
+//fact1, fact2, codeprov
 QString ExampleTempateSerrialization::visualData(const QVariantList &list)
 {
     //visual data depends of codeprov
-    const QString symbols [7] = {"", "..", "", ">=", "<=", ">", "<"};
+    const QString symbols [7] = {"", " .. ", "", ">=", "<=", ">", "<"};
 
     if (list.count() != 3)
         return "";
 
     QString str = "";
-    int codeprov = list.at(2).toInt();
-    qDebug()<<"codeprov "<<codeprov;
+    int codeprov = list.at(0).toInt();
 
     //if norma1 doesn't exist
-    if ( list.at(0).toString() == "" )
+    if ( list.at(1).toString() == "" )
     return str;
 
     switch (codeprov)
@@ -373,36 +384,32 @@ QString ExampleTempateSerrialization::visualData(const QVariantList &list)
     case 1:
     {
         //for norma
-        if ( (list.at(0).toString() == "+")
-        || (list.at(0).toString() == "-") )
+        if ( (list.at(1).toString() == "+")
+        || (list.at(1).toString() == "-") )
         {
-            str = list.at(0).toString();
+            str = list.at(1).toString();
         }
         //for fact values
         else
         {
-            if ( qRound(list.at(0).toDouble()) == 0)
+            if ( qRound(list.at(1).toDouble()) == 0)
                 str = "-";
-            if ( qRound(list.at(0).toDouble()) == 1)
+            if ( qRound(list.at(1).toDouble()) == 1)
                 str = "+";
         }
     }
     break;
     case 2:
     {
-        qDebug()<<list.at(0).toString();
-        const int i = codeprov-1;
-        qDebug()<<symbols[i];
-        qDebug()<<list.at(1).toString();
-        str = list.at(0).toString()
-             +symbols[i]
-             +list.at(1).toString();
+        str = list.at(1).toString()
+             +symbols[codeprov-1]
+             +list.at(2).toString();
     }
     break;
     case 3: case 4: case 5: case 6:
     {
-        str = symbols->at(codeprov-1)
-             +list.at(0).toString();
+        str = symbols[codeprov-1]
+             +list.at(1).toString();
     }
     break;
     }//end switch
