@@ -40,13 +40,14 @@ MtTemplate *ExampleTempateSerrialization::loadTemplate()
 
 void ExampleTempateSerrialization::buildTemplateTree(MtTemplate *t)
 {
-    int headerCount = 1;
+    /*int headerCount = 1;
     int footerCount = 2;
 
     for(int i = 0; i < headerCount; i++)
     {
         MtHeader * h = t->addHeader();
         QString header = "Header "+QVariant(i).toString();
+        qDebug()<<h->itemData().count();
         h->itemData().at(0)->setData(QVariantList()<<header);
         buildHeaderTree(h,2);
     }
@@ -56,10 +57,10 @@ void ExampleTempateSerrialization::buildTemplateTree(MtTemplate *t)
        MtFooter * f = t->addFooter();
        f->itemData().at(0)->setData(QVariantList()<<"Footer");
        f->itemData().at(1)->setData(QVariantList()<<"Footer template");
-    }
+    }*/
 
 
-    /*const int headerCount = 1;
+    const int headerCount = 1;
     const int footerCount = 2;
 
     const QString ListSignature[footerCount] =
@@ -86,12 +87,12 @@ void ExampleTempateSerrialization::buildTemplateTree(MtTemplate *t)
        f->itemData().at(0)->setData(QVariantList()<<QString("Footer Template ").append(QVariant(i).toString()));
        //signature
        f->itemData().at(1)->setData(QVariantList()<<ListSignature->at(i));
-    }*/
+    }
 }
 
 void ExampleTempateSerrialization::buildHeaderTree(MtHeader *header, int recLevel)
 {
-    int headerCount = 1;
+    /*int headerCount = 1;
     int footerCount = 2;
     int subheaderCount = 2;
     if(recLevel <= 0)
@@ -121,10 +122,10 @@ void ExampleTempateSerrialization::buildHeaderTree(MtHeader *header, int recLeve
         f->itemData().at(0)->setData(QVariantList()<<"Footer");
         f->itemData().at(1)->setData(QVariantList()<<"Footer header");
 
-    }
+    }*/
 
 
-    /*const int headerCount = 1;
+    const int headerCount = 1;
     const int footerCount = 2;
     const int subheaderCount = 6;
 
@@ -134,19 +135,21 @@ void ExampleTempateSerrialization::buildHeaderTree(MtHeader *header, int recLeve
     QString ListSignature[footerCount] =
     {"Sidorov","Pupkin"};
 
+    //norma1, norma2, codeprov
     QVariant norma[subheaderCount][3] =
     {{1, NULL, 1}, //logical, "+"
      {1, NULL, 1}, //logical, "-"
      {1.2, 1.5, 2},//number range
      {1.0, 2.0, 2},//number range
-     {5, NULL, 2},  // equal
-     {6, NULL, 2}  // equal
+     {5, NULL, 3},  // equal
+     {6, NULL, 3}  // equal
      };
 
+    //fact1`, fact2
     const QVariant fact[subheaderCount][2] =
     {{1, NULL},  //logical
      {0, NULL},  //logical
-     {1.3, NULL},//number range
+     {1.3, 1.4},//number range
      {3, NULL},  //number range
      {5, NULL},  // equal
      {5, NULL}   // equal
@@ -187,9 +190,14 @@ void ExampleTempateSerrialization::buildHeaderTree(MtHeader *header, int recLeve
                                                     <<norma[i][2]);
 
         //fact - get dataview
-        str = visualData(QVariantList()<<fact[i][0]
-                                       <<fact[i][1]
-                                       <<fact[i][2]);
+        qDebug()<<"i "<<i;
+        qDebug()<<norma[i][2]<<", "
+                <<fact[i][0]<<", "
+                <<fact[i][1];
+        str = visualData(QVariantList()<<norma[i][2]
+                                       <<fact[i][0]
+                                       <<fact[i][1]);
+        qDebug()<<"set visual data";
         //add norma once again to compare values
         //dataview   fact1  fact2  norma1  norma2  codeprov
         sh->itemData().at(3)->setData(QVariantList()<<str
@@ -209,7 +217,7 @@ void ExampleTempateSerrialization::buildHeaderTree(MtHeader *header, int recLeve
         f->itemData().at(0)->setData(QVariantList()<<QString("Footer ").append(str));
         //signature
         f->itemData().at(1)->setData(QVariantList()<<ListSignature->at(i));
-    }*/
+    }
 
 }
 
@@ -221,7 +229,8 @@ defaultHeaderData(MtTemplateFactory::TemplateType type, MtHeader *parent)
     MtTemplateItem::ItemData data;
     switch(type)
     {
-    case JustTemplate:
+    case JustTemplate: case EditableDocument:
+    {
         /*data.push_back(new MtDataItem(parent));
         data.push_back(new MtDataItem(parent));*/
 
@@ -229,7 +238,8 @@ defaultHeaderData(MtTemplateFactory::TemplateType type, MtHeader *parent)
         data.push_back(new MtReadOnlyItem(parent));
         //name
         data.push_back(new MtReadOnlyItem(parent));
-    case EditableDocument:
+    }
+    //case EditableDocument:
         break;
     }
     return data;
@@ -251,15 +261,23 @@ MtTemplateItem::ItemData ExampleTemplateFactory::defaultSubHeaderData(MtTemplate
         //norma
         data.push_back(new MtReadOnlyItem(parent));
     }
+    break;
     case EditableDocument:
+    {
+        //nompp
+        data.push_back(new MtReadOnlyItem(parent));
+        //name
+        data.push_back(new MtReadOnlyItem(parent));
+        //norma
+        data.push_back(new MtReadOnlyItem(parent));
         //fact value
         MtDataItem* dataItem = new ExampleCustomDataItem(parent);
         MtIndicatorItem* indicator = new MtIndicatorItem(parent);
         //dataItem->connectIndicator(indicator, MtCompare::tester("mt.compare.test"));
         data.push_back(dataItem);
         data.push_back(indicator);
-
-        break;
+    }
+    break;
     }
     return data;
 }
@@ -276,14 +294,18 @@ MtTemplateItem::ItemData ExampleTemplateFactory::defaultFooterData(MtTemplateFac
         //name of signature
         data.push_back(new MtReadOnlyItem(parent));
     }
+    break;
     case EditableDocument:
+    {
 
         //data.push_back(new MtDataItem(parent));
+        //name of signature
+        data.push_back(new MtReadOnlyItem(parent));
         //signature
         MtDataItem* dataItem = new ExampleCustomDataItem(parent);
         data.push_back(dataItem);
-
-        break;
+    }
+    break;
     }
     return data;
 }
@@ -328,18 +350,22 @@ void ExampleCustomDataItem::load()
 }
 
 //---------------------------
-//codeprov, norma1, norma2
-//codeprov, data1, data2
+//norma1, norma2, codeprov
+//data1, data2, codeprov
 QString ExampleTempateSerrialization::visualData(const QVariantList &list)
 {
     //visual data depends of codeprov
     const QString symbols [7] = {"", "..", "", ">=", "<=", ">", "<"};
 
+    if (list.count() != 3)
+        return "";
+
     QString str = "";
-    int codeprov = list.at(0).toInt();
+    int codeprov = list.at(2).toInt();
+    qDebug()<<"codeprov "<<codeprov;
 
     //if norma1 doesn't exist
-    if ( list.at(1).toString() == "" )
+    if ( list.at(0).toString() == "" )
     return str;
 
     switch (codeprov)
@@ -347,32 +373,36 @@ QString ExampleTempateSerrialization::visualData(const QVariantList &list)
     case 1:
     {
         //for norma
-        if ( (list.at(1).toString() == "+")
-        || (list.at(1).toString() == "-") )
+        if ( (list.at(0).toString() == "+")
+        || (list.at(0).toString() == "-") )
         {
-            str = list.at(1).toString();
+            str = list.at(0).toString();
         }
         //for fact values
         else
         {
-            if ( qRound(list.at(1).toDouble()) == 0)
+            if ( qRound(list.at(0).toDouble()) == 0)
                 str = "-";
-            if ( qRound(list.at(1).toDouble()) == 1)
+            if ( qRound(list.at(0).toDouble()) == 1)
                 str = "+";
         }
     }
     break;
     case 2:
     {
-        str = list.at(1).toString()
-             +symbols->at(codeprov-1)
-             +list.at(2).toString();
+        qDebug()<<list.at(0).toString();
+        const int i = codeprov-1;
+        qDebug()<<symbols[i];
+        qDebug()<<list.at(1).toString();
+        str = list.at(0).toString()
+             +symbols[i]
+             +list.at(1).toString();
     }
     break;
     case 3: case 4: case 5: case 6:
     {
         str = symbols->at(codeprov-1)
-             +list.at(1).toString();
+             +list.at(0).toString();
     }
     break;
     }//end switch
